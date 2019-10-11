@@ -270,15 +270,15 @@ class jenkinsJobs():
 		reg_files = jrt_repo.get_regression_suite_files(files_changed)
 		return committer, emailID, reg_files
 
-class utlis_jrt():
-	def getAllFileNames(path):
+class utils_jrt():
+	def getAllFileNames(self, path):
 		listfilename = []
-		for dirpaths, dirnames, filenames in os.walk(mp.self.workspace_path):
+		for dirpaths, dirnames, filenames in os.walk(path):
 			for filename in filenames:
 			 	listfilename.append(filename)
 		return listfilename
 
-	def getAllFileNames(path, logfilename):
+	def logAllJobFileNames(self, path, logfilename):
 		listfilename = []
 		if os.path.exists(logfilename):
 			os.remove(logfilename)
@@ -286,19 +286,19 @@ class utlis_jrt():
 
 		for dirpaths, dirnames, filenames in os.walk(path):
 			for filename in filenames:
-				print(filename)
+				# print(filename)
 				
 				fname,fext = os.path.splitext(filename)
 				if fext == '.job':
 					listfilename.append(filename)
 					logfile.write(filename + '\n')
 				else:
-					print('Unknown job file ', filename)
+					print('Unknown job file type', filename)
 
 		logfile.close()
 		return listfilename
 
-	def getAllFileNamesAndPath(path, logfilename):
+	def logAllFileNamesAndPath(self, path, logfilename):
 		listFileNamePath = []
 		if os.path.exists(logfilename):
 			os.remove(logfilename)
@@ -312,8 +312,13 @@ class utlis_jrt():
 						logfile.write(strfileAndpath + '\n')
 						#print(strfileAndpath)
 						listFileNamePath.append(strfileAndpath)
+					elif filename == '.empty':
+						strfileAndpath = os.path.join(dirpaths,filename)
+						logfile.write(strfileAndpath + '\n')
+						# print('Unknown job file ', filename)
 					else:
-						print('Unknown job file ', filename)
+						print('Unknown file type', filename)
+
 		logfile.close()
 
 		return listFileNamePath

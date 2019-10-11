@@ -2,25 +2,20 @@
 import os
 import filecmp
 import argparse
-from testplan import mod_test_plan
-from testplan.mod_test_plan import jenkinsJobs
-
-mp = mod_test_plan
+from testplan.mod_test_plan import jenkinsJobs, utils_jrt
 
 #get newly added files
 #validate it as per format
 #generate email if it fails to the committer and QA
 #Generate test plan excel
-# REPO_PATH = '/mnt/c/code/jenkins-regression-tests/'
-
-# repo_path = '/mnt/c/code/jenkins-regression-tests/'
 
 jj = jenkinsJobs()
 
 def main():
 	parser = argparse.ArgumentParser()
 #	parser.add_argument('--createplan', action='store_true', help='Create test plan')
-	parser.add_argument('--s1', action='store_true', help='Test ground')
+	parser.add_argument('--test2', action='store_true', help='Check a changeset for valid job file tempate')
+	parser.add_argument('--test1', action='store_true', help='To get job files and job files with path')
 	parser.add_argument('--cps', action='store_true', help='Create test plans')
 	parser.add_argument('--print', action='store_true', help='Enable debug print')
 	parser.add_argument('--folder', default = '~/', type=str , help = 'job files folder' )
@@ -37,14 +32,17 @@ def main():
 	if args.cps:
 		jj.createTestPlanWorkbook()
 
-	if args.s1:
+	if args.test2:
 		changeset_id = 'd5bc72f6a4f9'
 		author, emailID, jobfiles = jj.parse_repository(changeset_id)
 		file_report = jj.parse_job_files(jobfiles)
 		jj.send_email(changeset_id, author, emailID, file_report)
 		
+	if args.test1:
+		utils_jrt().logAllJobFileNames(jj.getWorkspacePath(), 'jobfiles-list.txt')
+		utils_jrt().logAllFileNamesAndPath(jj.getWorkspacePath(), 'jobfilesWPath-list.txt')
 
-	if not(args.s1) and not(args.cps):
+	if not(args.test2) and not(args.cps) and not(args.test1):
 		print('Use --help to get more info')
 
 
