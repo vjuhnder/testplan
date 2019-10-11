@@ -1,18 +1,9 @@
 #!/usr/bin/python3
 import sys, os, subprocess
+import repo.utils
+#for test run ./repo_lib.py
 
 REPO_PATH = '/mnt/c/code/jenkins-regression-tests/'
-
-class ChDir(object):
-    def __init__(self, new_dir):
-        self._new_dir = new_dir
-        self._old_dir = os.getcwd()
-
-    def __enter__(self):
-        os.chdir(self._new_dir)
-
-    def __exit__(self, *args):
-        os.chdir(self._old_dir)
 
 def extractEmail(strval):
 	return strval[strval.find("<")+1:strval.find(">")]
@@ -23,7 +14,7 @@ def extractAuthor(strval):
 #Get files added of a revision
 def get_repo_log(repo, changeset):
 
-	with ChDir(repo):	    
+	with utils.ChDir(repo):	    
 	    run_cmd = subprocess.Popen(['hg','log','-r', changeset, '--template', b'{file_adds}'], stdout=subprocess.PIPE)
 	    run_cmd.wait()
 	    files_adds, _ = run_cmd.communicate()
@@ -52,5 +43,8 @@ def get_repo_log(repo, changeset):
 
 
 if __name__ == "__main__":
-	get_repo_log(REPO_PATH, 'a83913d5b585')
+	files, author, email = get_repo_log(REPO_PATH, 'a83913d5b585')
+	print(files)
+	print(author)
+	print(email)
 

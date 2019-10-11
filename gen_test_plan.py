@@ -3,6 +3,9 @@ import os
 import filecmp
 import argparse
 from testplan.mod_test_plan import jenkinsJobs, utils_jrt
+from repo import jrt_repo
+
+#python3 ./gen_test_plan.py --cps --out '/home/jenkins/.jenkins/testplan_workspace/' --folder '/home/jenkins/.jenkins/testplan_workspace/jenkins-regression-tests/'
 
 #get newly added files
 #validate it as per format
@@ -14,6 +17,7 @@ jj = jenkinsJobs()
 def main():
 	parser = argparse.ArgumentParser()
 #	parser.add_argument('--createplan', action='store_true', help='Create test plan')
+	parser.add_argument('--test3', action='store_true', help='Test jrt repo cloning')
 	parser.add_argument('--test2', action='store_true', help='Check a changeset for valid job file tempate')
 	parser.add_argument('--test1', action='store_true', help='To get job files and job files with path')
 	parser.add_argument('--cps', action='store_true', help='Create test plans')
@@ -42,7 +46,10 @@ def main():
 		utils_jrt().logAllJobFileNames(jj.getWorkspacePath(), 'jobfiles-list.txt')
 		utils_jrt().logAllFileNamesAndPath(jj.getWorkspacePath(), 'jobfilesWPath-list.txt')
 
-	if not(args.test2) and not(args.cps) and not(args.test1):
+	if args.test3:
+		jrt_repo.clone_jrt_repo()
+
+	if not(args.test2) and not(args.cps) and not(args.test1) and not(args.test2) and not(args.test3):
 		print('Use --help to get more info')
 
 
