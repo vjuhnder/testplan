@@ -15,8 +15,8 @@ HEADER_STRING = 	"#TEST_DESCR_START\n\
 #PASS-CRITERIA_single_ln(Pass: )\n\
 #TEST_DESCR_END"
 
-WORKSPACE = '/mnt/c/code/jenkins-regression-tests/regression-suites/'
-WORKBOOKPATH = '/mnt/c/code/jrt-testplan/'
+# WORKSPACE = '/mnt/c/code/jenkins-regression-tests/regression-suites/'
+# WORKBOOKPATH = '/mnt/c/code/jrt-testplan/'
 TESTPLAN_FILENAME = 'Testplan.xls'
 
 jobStr = ['NAME', 'VERSION', 'MODULE_NAME', 'PLATFORM', 'SUMMARY', 'DESCRIPTION', 'PASS-CRITERIA', 'wner']
@@ -41,6 +41,10 @@ class jenkinsJobs():
 		self.pf_str = ""
 		self.own_str = ""
 
+		self.workspace_path = ""
+		self.workbook_path = ""
+
+
 	def clearProperties(self):
 		self.name_str = ""
 		self.ver_str = ""
@@ -50,6 +54,18 @@ class jenkinsJobs():
 		self.desc_str = ""
 		self.pf_str = ""
 		self.own_str = ""
+
+	def setWorkspacePath(self, path):
+		self.workspace_path = path
+
+	def getWorkspacePath(self):
+		return self.workspace_path
+
+	def setWorkbookPath(self, path):
+		self.workbook_path = path
+
+	def getWorkbookPath(self):
+		return self.workbook_path
 
 	def enableprint(self):
 		self.enable_print = True
@@ -64,7 +80,7 @@ class jenkinsJobs():
 			#dir1 = eachval			
 			if os.path.isdir(dir1) == False:
 				#Level1 job files added
-				dir1.replace(WORKSPACE, '')
+				dir1.replace(self.workspace_path, '')
 				if self.enable_print:
 					print("Dir...path...",dir1)
 				jobfiles.append(dir1)
@@ -76,7 +92,7 @@ class jenkinsJobs():
 					dir2 = os.path.join(dir1,subDirFiles)
 					if os.path.isdir(dir2) == False:						
 						#Level2 job files added
-						dir2.replace(WORKSPACE, '')
+						dir2.replace(self.workspace_path, '')
 						if self.enable_print:
 							print("Dir2...", dir2)
 						jobfiles.append(dir2)
@@ -87,7 +103,7 @@ class jenkinsJobs():
 						for subDir2Files in (os.listdir(dir2)):
 							dir3 = os.path.join(dir2,subDir2Files)
 							#Level3 job files added
-							dir3.replace(WORKSPACE, '')
+							dir3.replace(self.workspace_path, '')
 							if self.enable_print:
 								print("Dir3...", dir3)
 							jobfiles.append(dir3)
@@ -161,7 +177,7 @@ class jenkinsJobs():
 			sheetName = sheetName[:29]
 
 		excelSheet = workbook.add_sheet(sheetName)
-		jobFiles = self.getJobFileNames(WORKSPACE + folderName)
+		jobFiles = self.getJobFileNames(self.workspace_path + folderName)
 
 		if len(jobFiles) == 0:
 			print("No job files in dir ", folderName)
@@ -177,7 +193,7 @@ class jenkinsJobs():
 			self.parseEachJobFile(eachjob)
 			## Write excel sheet
 			excelSheet.write(rowIndex, self.getIDExcelColumn('S.No'), rowIndex)
-			excelSheet.write(rowIndex, self.getIDExcelColumn('Module Name'), eachjob.replace((WORKSPACE + folderName + '/'), ''))
+			excelSheet.write(rowIndex, self.getIDExcelColumn('Module Name'), eachjob.replace((self.workspace_path + folderName + '/'), ''))
 			excelSheet.write(rowIndex, self.getIDExcelColumn('Test Name'), self.name_str)
 			excelSheet.write(rowIndex, self.getIDExcelColumn('Test Summary'), self.summ_str)
 			excelSheet.write(rowIndex, self.getIDExcelColumn('Pass-Criteria'), self.pf_str)
@@ -187,31 +203,31 @@ class jenkinsJobs():
 
 	def createTestPlanWorkbook(self):
 		#create and populate test plan
-		print("Folder to process ", WORKSPACE)
+		print("Folder to process ", self.workspace_path)
 
 		workb = Workbook()
 		#parse job folder
-		for eachdir in (os.listdir(WORKSPACE)):
-			if os.path.isdir(os.path.join(WORKSPACE,eachdir)) == True:
+		for eachdir in (os.listdir(self.workspace_path)):
+			if os.path.isdir(os.path.join(self.workspace_path,eachdir)) == True:
 				if self.enable_print:
 					print("Dir...", eachdir)
 				
 				self.createTestPlanSheet(eachdir, workb)
 
 		try:
-			workb.save(WORKBOOKPATH + TESTPLAN_FILENAME)
-			print("File saved as ", WORKBOOKPATH + TESTPLAN_FILENAME)
+			workb.save(self.workbook_path + TESTPLAN_FILENAME)
+			print("File saved as ", self.workbook_path + TESTPLAN_FILENAME)
 		except:
-			print("Unable to save the excel file ", WORKBOOKPATH + TESTPLAN_FILENAME)
+			print("Unable to save the excel file ", self.workbook_path + TESTPLAN_FILENAME)
 			fname,fext = os.path.splitext(TESTPLAN_FILENAME)
 			renameFile = fname+str(datetime.datetime.now())+fext
-			workb.save(WORKBOOKPATH + renameFile)
-			print("File saved as ", WORKBOOKPATH + renameFile)
+			workb.save(self.workbook_path + renameFile)
+			print("File saved as ", self.workbook_path + renameFile)
 
 class utlis_jrt():
 	def getAllFileNames(path):
 		listfilename = []
-		for dirpaths, dirnames, filenames in os.walk(mp.WORKSPACE):
+		for dirpaths, dirnames, filenames in os.walk(mp.self.workspace_path):
 			for filename in filenames:
 			 	listfilename.append(filename)
 		return listfilename

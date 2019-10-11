@@ -14,6 +14,8 @@ mp = mod_test_plan
 REPO_PATH = '/mnt/c/code/jenkins-regression-tests/'
 
 jj = jenkinsJobs()
+# jj.setWorkspacePath('/mnt/c/code/jenkins-regression-tests/regression-suites/')
+
 
 def parse_repository(changeset):
 
@@ -59,7 +61,12 @@ def main():
 	parser.add_argument('--s1', action='store_true', help='Test ground')
 	parser.add_argument('--cps', action='store_true', help='Create test plans')
 	parser.add_argument('--print', action='store_true', help='Enable debug print')
+	parser.add_argument('--folder', default = '~/', type=str , help = 'job files folder' )
+	parser.add_argument('--out', default = '~/', type=str , help = 'Output path' )
 	args = parser.parse_args()
+
+	jj.setWorkbookPath(args.out)
+	jj.setWorkspacePath(args.folder)
 
 	if args.print:
 		jj.enableprint()
@@ -72,8 +79,7 @@ def main():
 		author, emailID, jobfiles = parse_repository(changeset_id)
 		file_report = parse_job_files(jobfiles)
 		send_email(changeset_id, author, emailID, file_report)
-		# print(str(jj.checkJobFile('/mnt/c/code/jenkins-regression-tests/regression-suites/carle-linux-x86-scans/test_beamforming_cal_1D.job')))
-		# print(str(jj.checkJobFile('/mnt/c/code/jenkins-regression-tests/regression-suites/carle-linux-x86-scans/test_beamforming_cal_2D.job')))
+		
 
 	if not(args.s1) and not(args.cps):
 		print('Use --help to get more info')

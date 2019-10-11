@@ -49,21 +49,7 @@ def get_repo_log(repo, changeset):
 
 	return files_added_list + files_modified_list, author_name, author_email
 
-def get_jenkins_regression_repo():
-	# Checks if the repo is already cloned else clone
-	if os.path.isdir('jenkins-regression-tests'):
-	    with ChDir('jenkins-regression-tests'):
-	        cmd = ' hg pull --quiet && hg up -C --quiet'
-	        ret_st = os.system(cmd)
-	        if ret_st:
-	            print("Error: Cannot pull/update repo")
-	            sys.exit(-1)
-	else:
-	    cmd = 'hg clone https://bitbucket.org/uhnder/jenkins-regression-tests'+' ' + workspace +'/'+ test_folder_name + ' --quiet'
-	    ret_st = os.system(cmd)
-	    if ret_st:
-	        print("Error: Cannot clone repo(%s) into %s" %(args.repo_name, os.path.abspath(workspace+'/'+test_folder_name)))
-	        sys.exit(-1)
+
 
 if __name__ == "__main__":
 	get_repo_log(REPO_PATH, 'a83913d5b585')
