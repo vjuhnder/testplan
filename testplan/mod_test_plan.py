@@ -4,6 +4,7 @@ import xlwt
 import os
 from xlwt import Workbook
 import datetime
+from repo import repo_lib, jrt_repo
 
 HEADER_STRING = 	"#TEST_DESCR_START\n\
 #NAME_single_ln()\n\
@@ -43,6 +44,7 @@ class jenkinsJobs():
 
 		self.workspace_path = ""
 		self.workbook_path = ""
+		self.repo_path = ""
 
 
 	def clearProperties(self):
@@ -60,6 +62,12 @@ class jenkinsJobs():
 
 	def getWorkspacePath(self):
 		return self.workspace_path
+
+	def setRepoPath(self, path):
+		self.repo_path = path
+
+	def getRepoPath(self):
+		return self.repo_path
 
 	def setWorkbookPath(self, path):
 		self.workbook_path = path
@@ -223,6 +231,44 @@ class jenkinsJobs():
 			renameFile = fname+str(datetime.datetime.now())+fext
 			workb.save(self.workbook_path + renameFile)
 			print("File saved as ", self.workbook_path + renameFile)
+
+	def send_email(self, changeset, name, emailID, report):
+
+		if len(report) > 0 :
+			print("---- Email ----")
+			print(name, emailID)
+			for eachItem in report:
+				print(eachItem)
+		else:
+			print(changeset, " is fine")
+
+	def parse_job_files(self, regression_files):
+
+		file_notOk_report = []
+		file_ok_report = []
+		file_err_report = []
+		for eachfile in regression_files:
+			validity = self.checkJobFile(self.repo_path+eachfile)
+			if validity == 7 :
+				# print(self.repo_path + eachfile + " - File Valid ")
+				file_ok_report.append(self.repo_path + eachfile + " - File Valid ")
+			elif validity == -1:
+				# print(self.repo_path + eachfile + " - File not found/error ")
+				file_err_report.append(self.repo_path + eachfile + " - File not found/error ")
+			else:
+				# print(self.repo_path + eachfile + " - File Invalid ")
+				file_notOk_report.append(self.repo_path + eachfile + " - File Invalid ")
+
+		return file_notOk_report
+
+	def parse_repository(self, changeset):
+
+		files_changed, committer, emailID = repo_lib.get_repo_log(self.repo_path, changeset)
+		# for eachfile in files_changed:
+		# 	print(eachfile)
+		print(committer, ' ', emailID)
+		reg_files = jrt_repo.get_regression_suite_files(files_changed)
+		return committer, emailID, reg_files
 
 class utlis_jrt():
 	def getAllFileNames(path):
