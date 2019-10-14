@@ -175,7 +175,7 @@ class jenkinsJobs():
 							validCount = validCount + 1
 			return validCount
 		except:
-			# print("Unable to open the file")
+			print("Unable to open the file")
 			return -1
 
 	def createTestPlanSheet(self, folderName, workbook):
@@ -236,7 +236,9 @@ class jenkinsJobs():
 
 		if len(report) > 0 :
 			print("---- Email ----")
-			print(name, emailID)
+			print('Email ID : ', emailID)
+			print('Name : ', name)
+			print('File list : ')
 			for eachItem in report:
 				print(eachItem)
 		else:
@@ -248,6 +250,7 @@ class jenkinsJobs():
 		file_ok_report = []
 		file_err_report = []
 		for eachfile in regression_files:
+			# print(self.repo_path+eachfile)
 			validity = self.checkJobFile(self.repo_path+eachfile)
 			if validity == 7 :
 				# print(self.repo_path + eachfile + " - File Valid ")
@@ -266,9 +269,30 @@ class jenkinsJobs():
 		files_changed, committer, emailID = repo_lib.get_repo_log(self.repo_path, changeset)
 		# for eachfile in files_changed:
 		# 	print(eachfile)
-		print(committer, ' ', emailID)
+		# print(committer, ' ', emailID)
 		reg_files = jrt_repo.get_regression_suite_files(files_changed)
+		# for eachfile in reg_files:
+		# 	print(eachfile)
 		return committer, emailID, reg_files
+
+
+	def parse_repo_change_log(self, baseChangeset, recentChangeset):
+
+		id_list = repo_lib.get_changeset_list(self.repo_path, baseChangeset, recentChangeset)
+
+		# print(id_list)
+		# for eachID in id_list:
+		# 	if len(eachID) > 0 :
+		# 		print(eachID)
+		# 		files_changed, committer, emailID = repo_lib.get_repo_log(self.repo_path, eachID)
+		# 		print(committer, ' ', emailID)
+		# 		reg_files = jrt_repo.get_regression_suite_files(files_changed)
+		# 		print(reg_files)
+
+		# print(committer, ' ', emailID)
+		# reg_files = jrt_repo.get_regression_suite_files(files_changed)
+		# return committer, emailID, reg_files
+		return id_list
 
 class utils_jrt():
 	def getAllFileNames(self, path):
@@ -287,7 +311,6 @@ class utils_jrt():
 		for dirpaths, dirnames, filenames in os.walk(path):
 			for filename in filenames:
 				# print(filename)
-				
 				fname,fext = os.path.splitext(filename)
 				if fext == '.job':
 					listfilename.append(filename)

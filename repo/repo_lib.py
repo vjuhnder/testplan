@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import sys, os, subprocess
-import repo.utils
+import repo.utils as ut
 #for test run ./repo_lib.py
 
 REPO_PATH = '/mnt/c/code/jenkins-regression-tests/'
@@ -14,7 +14,7 @@ def extractAuthor(strval):
 #Get files added of a revision
 def get_repo_log(repo, changeset):
 
-	with utils.ChDir(repo):	    
+	with ut.ChDir(repo):	    
 	    run_cmd = subprocess.Popen(['hg','log','-r', changeset, '--template', b'{file_adds}'], stdout=subprocess.PIPE)
 	    run_cmd.wait()
 	    files_adds, _ = run_cmd.communicate()
@@ -40,7 +40,15 @@ def get_repo_log(repo, changeset):
 
 	return files_added_list + files_modified_list, author_name, author_email
 
+def get_changeset_list(repo, base, tip):
 
+	with ut.ChDir(repo):	    
+	    run_cmd = subprocess.Popen(['hg','log','-r', base+':'+tip, '--template', b'{node} '], stdout=subprocess.PIPE)
+	    run_cmd.wait()
+	    ids, _ = run_cmd.communicate()
+	    ids_list = str(ids, 'utf-8').split(' ')
+
+	return ids_list
 
 if __name__ == "__main__":
 	files, author, email = get_repo_log(REPO_PATH, 'a83913d5b585')
