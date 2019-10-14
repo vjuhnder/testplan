@@ -175,7 +175,7 @@ class jenkinsJobs():
 							validCount = validCount + 1
 			return validCount
 		except:
-			print("Unable to open the file")
+			print("Unable to open the file - ", jobfile)
 			return -1
 
 	def createTestPlanSheet(self, folderName, workbook):
@@ -209,7 +209,7 @@ class jenkinsJobs():
 			excelSheet.write(rowIndex, self.getIDExcelColumn('Platform'), self.plat_str)
 			excelSheet.write(rowIndex, self.getIDExcelColumn('Owner'), self.own_str)
 
-	def createTestPlanWorkbook(self):
+	def createTestPlanWorkbook(self, filename):
 		#create and populate test plan
 		print("Folder to process ", self.workspace_path)
 
@@ -223,14 +223,17 @@ class jenkinsJobs():
 				self.createTestPlanSheet(eachdir, workb)
 
 		try:
-			workb.save(self.workbook_path + TESTPLAN_FILENAME)
-			print("File saved as ", self.workbook_path + TESTPLAN_FILENAME)
+			workb.save(self.workbook_path + filename)
+			print("File saved as ", self.workbook_path + filename)
 		except:
-			print("Unable to save the excel file ", self.workbook_path + TESTPLAN_FILENAME)
-			fname,fext = os.path.splitext(TESTPLAN_FILENAME)
+			print("Unable to save the excel file ", self.workbook_path + filename)
+			fname,fext = os.path.splitext(filename)
 			renameFile = fname+str(datetime.datetime.now())+fext
 			workb.save(self.workbook_path + renameFile)
 			print("File saved as ", self.workbook_path + renameFile)
+			filename = renameFile
+
+		return filename
 
 	def send_email(self, changeset, name, emailID, report):
 
@@ -266,21 +269,27 @@ class jenkinsJobs():
 
 	def parse_repository(self, changeset):
 
-		files_changed, committer, emailID = repo_lib.get_repo_log(self.repo_path, changeset)
+		files_changed, committer, emailID, build_num = repo_lib.get_repo_log(self.repo_path, changeset)
 		# for eachfile in files_changed:
 		# 	print(eachfile)
 		# print(committer, ' ', emailID)
 		reg_files = jrt_repo.get_regression_suite_files(files_changed)
 		# for eachfile in reg_files:
 		# 	print(eachfile)
-		return committer, emailID, reg_files
+		return committer, emailID, reg_files, build_num
 
 
 	def parse_repo_change_log(self, baseChangeset, recentChangeset):
 
 		id_list = repo_lib.get_changeset_list(self.repo_path, baseChangeset, recentChangeset)
+		newid_list = []
+		print(id_list)
+		#last element is always null
+		#ignore first element, which is baseline
+		for eachid in range(1, len(id_list)-1):
+			newid_list.append(id_list[eachid])
+		print(newid_list)
 
-		# print(id_list)
 		# for eachID in id_list:
 		# 	if len(eachID) > 0 :
 		# 		print(eachID)
@@ -292,7 +301,7 @@ class jenkinsJobs():
 		# print(committer, ' ', emailID)
 		# reg_files = jrt_repo.get_regression_suite_files(files_changed)
 		# return committer, emailID, reg_files
-		return id_list
+		return newid_list
 
 class utils_jrt():
 	def getAllFileNames(self, path):

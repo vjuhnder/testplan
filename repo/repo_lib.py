@@ -35,10 +35,15 @@ def get_repo_log(repo, changeset):
 	    committer, _ = run_cmd.communicate()
 	    commit_author = str(committer, 'utf-8')
 
+	    run_cmd = subprocess.Popen(['hg','log','-r', changeset, '--template', b'{rev}'], stdout=subprocess.PIPE)
+	    run_cmd.wait()
+	    build_number, _ = run_cmd.communicate()
+	    build = str(build_number, 'utf-8')
+
 	    author_email = extractEmail(commit_author)
 	    author_name = extractAuthor(commit_author)
 
-	return files_added_list + files_modified_list, author_name, author_email
+	return files_added_list + files_modified_list, author_name, author_email, build
 
 def get_changeset_list(repo, base, tip):
 
@@ -51,8 +56,9 @@ def get_changeset_list(repo, base, tip):
 	return ids_list
 
 if __name__ == "__main__":
-	files, author, email = get_repo_log(REPO_PATH, 'a83913d5b585')
+	files, author, email, build = get_repo_log(REPO_PATH, 'a83913d5b585')
 	print(files)
 	print(author)
 	print(email)
+	print(build)
 
