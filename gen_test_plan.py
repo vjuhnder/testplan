@@ -65,6 +65,7 @@ def main():
 
 	if args.cps:
 		testplan_fname = jj.createTestPlanWorkbook(testplan_fname)
+		jrt_repo_email(testplan_fname)
 
 	if args.run:
 		testplan_fname = jj.createTestPlanWorkbook(testplan_fname)
