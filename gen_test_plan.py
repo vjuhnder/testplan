@@ -19,11 +19,11 @@ jj = jenkinsJobs()
 def main():
 	parser = argparse.ArgumentParser()
 #	parser.add_argument('--createplan', action='store_true', help='Create test plan')
-	parser.add_argument('--test5', action='store_true', help='Test5')
-	parser.add_argument('--test4', action='store_true', help='Get baseline ID')
-	parser.add_argument('--test3', action='store_true', help='Test jrt repo cloning')
-	parser.add_argument('--test2', action='store_true', help='Check a changeset for valid job file tempate')
-	parser.add_argument('--test1', action='store_true', help='To get job files and job files with path')
+	# parser.add_argument('--test5', action='store_true', help='Test5')
+	# parser.add_argument('--test4', action='store_true', help='Get baseline ID')
+	# parser.add_argument('--test3', action='store_true', help='Test jrt repo cloning')
+	# parser.add_argument('--test2', action='store_true', help='Check a changeset for valid job file tempate')
+	# parser.add_argument('--test1', action='store_true', help='To get job files and job files with path')
 	parser.add_argument('--test', default=None, type=int, help='To get job files and job files with path')
 	parser.add_argument('--cps', action='store_true', help='Create test plans')
 	parser.add_argument('--print', action='store_true', help='Enable debug print')
@@ -86,6 +86,10 @@ def main():
 			jrt_repo.set_baselineID()
 		
 	elif args.test == 8:
+		emailID = 'vigneswaran@uhnder.com'
+		author = 'vigneswaran'
+		eachID = '123456'
+		filereport = ['testjob1.job', 'testjob2.job']
 		em.send_email('Testplan.xls', eachID, author, emailID, filereport)
 
 if __name__ == "__main__":
