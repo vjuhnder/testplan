@@ -28,6 +28,7 @@ def jrt_repo_email(testplan_fname):
 			id_list = jj.parse_repo_change_log(changeset_id, tip_id)
 			for eachID in id_list:
 				if len(eachID) > 0 :
+					updateRepo(eachID)
 					author, emailID, jobfiles, build_num = jj.parse_repository(eachID)
 					file_report = jj.parse_job_files(jobfiles)
 					if len(file_report) > 0 :

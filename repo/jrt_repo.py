@@ -54,6 +54,16 @@ def get_tipID():
 			tipid_str = tip_id.stdout.decode('utf-8')
 	return tipid_str
 
+def updateRepo(changesetID):
+	if os.path.isdir('jenkins-regression-tests'):
+		print("Repository exist...!!!")
+		with ut.ChDir('jenkins-regression-tests'):
+			print("Getting repository updated to ... ", changesetID)
+			baseid = subprocess.run(['hg', 'up', '-C', changesetID], stdout = subprocess.PIPE)
+			baseid_str = baseid.stdout.decode('utf-8')
+			print(baseid_str)
+	
+
 def get_baselineID():
 	if os.path.exists(baselinefile):	
 		basef = open(baselinefile, 'r')
