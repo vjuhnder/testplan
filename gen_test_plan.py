@@ -32,6 +32,7 @@ def jrt_repo_email(testplan_fname):
 					jrt_repo.updateRepo(eachID)
 					file_report = jj.parse_job_files(jobfiles)
 					if len(file_report) > 0 :
+						testplan_fname = jj.createTestPlanWorkbook(testplan_fname)
 						em.send_email(testplan_fname, eachID, author, emailID, file_report, build_num)
 
 			#set recent id as baseline id
@@ -65,7 +66,7 @@ def main():
 		jj.enableprint()
 
 	if args.cps:
-		testplan_fname = jj.createTestPlanWorkbook(testplan_fname)
+		#testplan_fname = jj.createTestPlanWorkbook(testplan_fname)
 		jrt_repo_email(testplan_fname)
 
 	if args.run:
