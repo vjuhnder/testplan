@@ -9,10 +9,17 @@ import os
 def send_email(file, changeset, name, emailID, report, build_number):
 	msg = MIMEMultipart()
 
-	#email_id_to = 'vigneswaran@uhnder.com'
-	email_id_to = ['vigneswaran@uhnder.com', 'somnath@uhnder.com']
+	email_id_to = []
+	email_id_cc = ['vigneswaran@uhnder.com', 'somnath@uhnder.com']
+
+	if emailID:
+		email_id_to.append(emailID)
+	else:
+		email_id_to = email_id_cc
+
 	msg['From'] = 'jenkins@uhnder.com'
-	msg['To'] = 'vigneswaran@uhnder.com'
+	msg['To'] = ", ".join(email_id_to)
+	msg['Cc'] = ", ".join(email_id_cc)
 	msg['Subject'] = "Jenkins regression suites repo update: " + str(changeset)[:12] 
 	#email_id_cc = ['srikanth@uhnder.com','jaya@uhnder.com', 'ramprasath@uhnder.com', 'vigneswaran@uhnder.com', 'somnath@uhnder.com']
 	message = 'Hi All,<br><br>&nbsp;&nbsp;&nbsp;&nbsp;PFA for Jenkins regression suites Test plan file <b>'\
